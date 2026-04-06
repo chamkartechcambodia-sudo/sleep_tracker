@@ -58,7 +58,7 @@ class SleepQualityFragment : Fragment() {
                 // has a configuration change.
                 sleepQualityViewModel.doneNavigating()
             }
-        }
+        })
 
         return binding.root
     }
