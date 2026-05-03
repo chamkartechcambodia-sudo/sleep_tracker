@@ -1,127 +1,161 @@
-# Room - SleepQualityTracker app
+# Sleep Tracker — Android Kotlin M4
 
-This is the toy app for Lesson 6 of the [Android App Development in Kotlin course on Udacity](https://www.udacity.com/course/???).
+**STEP IT Academy** — Android Mobile Application Development (Kotlin + XML UI)
+> Module 4 — Room: Database, DAO, Coroutines, ViewModel, LiveData, DataBinding
 
-## SleepQualityTracker
-
-The SleepQualityTracker app is a demo app that helps you collect information about your sleep. 
-* Start time
-* End time
-* Quality
-* Time slept
-
-This app demonstrates the following views and techniques:
-* Room database
-* DAO
-* Coroutines
-
-It also uses and builds on the following techniques from previous lessons:
-* Transformation map
-* Data Binding in XML files
-* ViewModel Factory
-* Using Backing Properties to protect MutableLiveData
-* Observable state LiveData variables to trigger navigation
+---
 
 ## Screenshots
 
-![Screenshot1](screenshots/sleep_quality_tracker_start.png)
-![Screenshot2](screenshots/sleep_quality_tracker_stop.png)
-![Screenshot3](screenshots/sleep_quality_tracker_quality.png)
+![Start](screenshots/sleep_quality_tracker_start.png)
+![Stop](screenshots/sleep_quality_tracker_stop.png)
+![Quality](screenshots/sleep_quality_tracker_quality.png)
 
-## How to use this repo while taking the course
+---
 
+## About
 
-Each code repository in this class has a chain of commits that looks like this:
+Sleep Tracker is a demo app that records your sleep sessions — start time, end time, and sleep quality. All data is persisted locally using Room database. The UI reacts to database changes in real-time through LiveData and DataBinding.
 
-![listofcommits](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58befe2e_listofcommits/listofcommits.png)
+---
 
-These commits show every step you'll take to create the app. Each commit contains instructions for completing the that step.
+## Architecture
 
-Each commit also has a **branch** associated with it of the same name as the commit message, as seen below:
+Pattern: **MVVM** (Model-View-ViewModel)
 
-![branches](https://d17h27t6h515a5.cloudfront.net/topher/2017/April/590390fe_branches-ud855/branches-ud855.png
-)
-Access all branches from this tab.
-
-![listofbranches](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58befe76_listofbranches/listofbranches.png
-)
-
-
-![branchesdropdown](https://d17h27t6h515a5.cloudfront.net/topher/2017/April/590391a3_branches-dropdown-ud855/branches-dropdown-ud855.png
-)
-
-The branches are also accessible from the drop-down in the "Code" tab.
-
-## Requirements
-
-1. Android Studio (Jellyfish or above)
-2. JDK 21 with `JAVA_HOME` environment variable set. If you don't have JDK 21 installed or `JAVA_HOME` is not set, consider using a tool like `sdkman` to simplify the process. Refer to the sdkman documentation for installation instructions: [sdkman installation](https://sdkman.io/install)
-
-## Working with the Course Code
-
-Here are the basic steps for working with and completing exercises in the repo.
-
-The basic steps are:
-
-1. Clone the repo.
-2. Check out the branch corresponding to the step you want to attempt.
-3. Find and complete the TODOs.
-4. Optionally commit your code changes.
-5. Compare your code with the solution.
-6. Repeat steps 2-5 until you've gone trough all the steps to complete the toy app.
-
-
-**Step 1: Clone the repo**
-
-As you go through the course, you'll be instructed to clone the different exercise repositories, so you don't need to set these up now. You can clone a repository from github in a folder of your choice with the command:
-
-```bash
-git clone https://github.com/udacity/REPOSITORY_NAME.git
+```
+UI (Fragment + DataBinding)
+        │
+        ▼
+  ViewModel  ──────────────────► Direct DAO access
+        │                                │
+        │                                ▼
+   LiveData                       Room Database
+   Coroutines                     (SleepNight Entity + DAO)
 ```
 
-**Step 2: Check out the step branch**
+Key concepts:
+- **Room** — Entity, DAO, Database singleton
+- **Coroutines** — `viewModelScope.launch` for all DB operations
+- **LiveData** — observe DB changes, drive button states
+- **LiveData.map** — transform raw data for display
+- **DataBinding** — bind ViewModel data and click handlers directly in XML
+- **Navigation SafeArgs** — pass `nightId` between fragments
 
-As you go through different steps in the code, you'll be told which step you're on, as well as a link to the corresponding branch.
+---
 
-You'll want to check out the branch associated with that step. The command to check out a branch would be:
+## Project Structure
 
-```bash
-git checkout BRANCH_NAME
+```
+app/src/main/java/com/example/android/trackmysleepquality/
+├── MainActivity.kt
+├── Util.kt                              # formatNights(), convertLongToDateString()
+├── database/
+│   ├── SleepNight.kt                   # @Entity
+│   ├── SleepDatabaseDao.kt             # @Dao
+│   └── SleepDatabase.kt                # @Database singleton
+├── sleeptracker/
+│   ├── SleepTrackerFragment.kt
+│   ├── SleepTrackerViewModel.kt
+│   └── SleepTrackerViewModelFactory.kt
+└── sleepquality/
+    ├── SleepQualityFragment.kt
+    ├── SleepQualityViewModel.kt
+    └── SleepQualityViewModelFactory.kt
 ```
 
-**Step 3: Find and complete the TODOs**
+---
 
-Once you've checked out the branch, you'll have the code in the exact state you need. You'll even have TODOs, which are special comments that tell you all the steps you need to complete the exercise. You can easily navigate to all the TODOs using Android Studio's TODO tool. To open the TODO tool, click the button at the bottom of the screen that says TODO. This will display a list of all comments with TODO in the project. 
+## Tech Stack
 
-We've numbered the TODO steps so you can do them in order:
-![todos](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58bf00e7_todos/todos.png
-)
+| Library | Version |
+|---|---|
+| Android Gradle Plugin | 9.0.1 |
+| Kotlin (bundled with AGP) | — |
+| AndroidX Core KTX | 1.18.0 |
+| AppCompat | 1.7.1 |
+| ConstraintLayout | 2.2.1 |
+| Navigation Component | 2.9.7 |
+| Lifecycle ViewModel + LiveData | 2.9.0 |
+| Room | 2.7.1 |
+| Coroutines (Android) | 1.10.2 |
+| Material Components | 1.13.0 |
 
-**Step 4: Commit your code changes**
+---
 
-After You've completed the TODOs, you can optionally commit your changes. This will allow you to see the code you wrote whenever you return to the branch. The following git code will add and save **all** your changes.
+## Build Requirements
+
+| Tool | Version |
+|---|---|
+| Android Gradle Plugin | 9.0.1 |
+| Gradle Wrapper | 9.2.1 |
+| JDK | 21 |
+| Min SDK | 24 |
+| Target SDK | 36 |
+| Compile SDK | 36 |
+
+**JDK setup in Android Studio:**
+`File → Settings → Build, Execution, Deployment → Build Tools → Gradle → Gradle JDK` → select **Embedded JDK**
+
+---
+
+## How to Work with This Repo
+
+### Branch structure
+
+| Branch | Purpose |
+|---|---|
+| `main` | Complete solution — all steps finished |
+| `Step.XX-Exercise-<topic>` | Starting point with TODOs for the student |
+| `Step.XX-Solution-<topic>` | Reference answer for the step |
+
+### Workflow per step
+
+1. Check out the Exercise branch for the step you are working on
+2. Find and complete all `// TODO` comments in Android Studio (View → Tool Windows → TODO)
+3. Compare your result with the corresponding Solution branch
+4. Move on to the next step
 
 ```bash
-git add .
-git commit -m "Your commit message"
+git checkout Step.01-Exercise-Create-Night-Data-Entity
 ```
 
-**Step 5: Compare with the solution**
+---
 
-Most exercises will have a list of steps for you to check off in the classroom. Once you've checked these off, you'll see a pop up window with a link to the solution code. Note the **Diff** link:
+## Exercise Steps
 
-![solutionwindow](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58bf00f9_solutionwindow/solutionwindow.png
-)
+| Step | Branch | Topic | Key Files |
+|---|---|---|---|
+| 01 | `Step.01-Exercise-Create-Night-Data-Entity` | Create Room Entity | `SleepNight.kt` |
+| 02 | `Step.02-Exercise-Create-SleepDatabaseDao` | Create DAO | `SleepDatabaseDao.kt` |
+| 03 | `Step.03-Exercise-Create-RoomDatabase` | Create Database | `SleepDatabase.kt` |
+| 04 | `Step.04-Exercise-Add-ViewModel` | Add ViewModel | `SleepTrackerViewModel.kt` |
+| 05 | `Step.05-Exercise-Coroutines` | Add Coroutines | `SleepTrackerViewModel.kt` |
+| 06 | `Step.06-Exercise-Record-SleepQuality` | Record Sleep Quality | `SleepQualityViewModel.kt`, `SleepQualityFragment.kt` |
+| 07 | `Step.07-Exercise-Add-Button-States-and-SnackBar` | Button States + SnackBar | `SleepTrackerViewModel.kt`, `fragment_sleep_tracker.xml` |
 
-The **Diff** link will take you to a Github diff as seen below:
-![diff](https://d17h27t6h515a5.cloudfront.net/topher/2017/March/58bf0108_diffsceenshot/diffsceenshot.png
-)
+---
 
-All of the code that was added in the solution is in green, and the removed code (which will usually be the TODO comments) is in red. 
+## Navigation Flow
 
-You can also compare your code locally with the branch of the following step.
+```
+SleepTrackerFragment
+        │
+        │ onStopTracking() → navigate with nightId (SafeArgs)
+        ▼
+SleepQualityFragment
+        │
+        │ onSetSleepQuality() → navigate back
+        ▼
+SleepTrackerFragment
+```
 
-## Report Issues
-Notice any issues with a repository? Please file a github issue in the repository.
+---
 
+## Course Info
 
+- **Academy:** STEP IT Academy — Cambodia
+- **GitHub Org:** chamkartechcambodia-sudo
+- **Course:** Android Mobile Application Development (Kotlin + XML UI)
+- **Module:** M4 — Room (Day 17–18)
+- **Instructor:** Magn
